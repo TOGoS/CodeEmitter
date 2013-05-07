@@ -27,6 +27,8 @@ public class PHPEmitter implements ExpressionEmitter<Exception>
 			w.write("false");
 		} else if( v == Boolean.TRUE ) {
 			w.write("true");
+		} else if( v instanceof Number ) {
+			w.write(v.toString());
 		} else {
 			throw new CompileError("Can't encode "+v+" as a scalar literal", sLoc);
 		}

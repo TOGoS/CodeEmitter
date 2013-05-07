@@ -4,5 +4,5 @@ import togos.codeemitter.ExpressionEmitter;
 
 public interface Expression
 {
-	public void emit( ExpressionEmitter<?> emitter );
+	public <Ex extends Throwable> void emit( ExpressionEmitter<? extends Ex> emitter ) throws Ex;
 }
