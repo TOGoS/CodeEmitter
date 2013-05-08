@@ -68,7 +68,9 @@ public class SQLEmitter implements ExpressionEmitter<Exception>
 			w.write( quoteIdentifier(cn) );
 			nc = true;
 		}
-		w.write(") REFERENCES (");
+		w.write(") REFERENCES ");
+		w.write(quoteIdentifier(fkc.foreignTableName));
+		w.write(" (");
 		nc = false;
 		for( String cn : fkc.foreignColumnNames ) {
 			if( nc ) w.write(", ");
@@ -94,14 +96,14 @@ public class SQLEmitter implements ExpressionEmitter<Exception>
 		}
 		if( td.primaryKeyColumnNames.size() > 0 ) {
 			getReadyToEmitAComponent( anyComponentsEmitted );
-			w.startLine("PRIMARY KEY (");
+			w.write("PRIMARY KEY (");
 			boolean nc = false;
 			for( String pkcn : td.primaryKeyColumnNames ) {
 				if( nc ) w.write(", ");
 				w.write(quoteIdentifier(pkcn));
 				nc = true;
 			}
-			w.endLine(")");
+			w.write(")");
 			anyComponentsEmitted = true;
 		}
 		for( IndexDefinition id : td.indexes ) {

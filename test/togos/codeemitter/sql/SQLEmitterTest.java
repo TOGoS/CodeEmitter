@@ -21,9 +21,10 @@ public class SQLEmitterTest extends TestCase
 		td.columns.add(new ColumnDefinition("ScoopDate", "DATE", true, null));
 		td.columns.add(new ColumnDefinition("ToadName", "VARCHAR(50)", false, null));
 		td.columns.add(new ColumnDefinition("MuleName", "VARCHAR(10)", false, new ScalarLiteral("John Cusack", BaseSourceLocation.NONE)));
+		td.primaryKeyColumnNames = Arrays.asList("FrogID");
 		td.foreignKeyConstraints.add(new ForeignKeyConstraint(
 			"FrogScoop", Arrays.asList("ScoopID","ScoopDate"),
-			"Scoop", Arrays.asList("IDOfScoop","DateOfScoppage")
+			"Scoop", Arrays.asList("IDOfScoop","DateOfScoop")
 		));
 		td.indexes.add(new IndexDefinition("Toad", Arrays.asList("ToadName")));
 		
