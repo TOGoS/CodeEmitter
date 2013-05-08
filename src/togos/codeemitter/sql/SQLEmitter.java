@@ -1,6 +1,7 @@
 package togos.codeemitter.sql;
 
 import java.io.IOException;
+import java.io.Writer;
 
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
@@ -17,6 +18,9 @@ public class SQLEmitter implements ExpressionEmitter<Exception>
 	TextWriter w;
 	public SQLEmitter( TextWriter w ) {
 		this.w = w;
+	}
+	public SQLEmitter( Writer w ) {
+		this( new TextWriter(w) );
 	}
 	
 	protected String quoteIdentifier( String ident ) {
