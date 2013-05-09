@@ -1,10 +1,9 @@
 package togos.codeemitter.sql;
 
-import java.io.StringWriter;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
-import togos.codeemitter.TextWriter;
+import togos.asyncstream.StringCollector;
 import togos.codeemitter.structure.ScalarLiteral;
 import togos.codeemitter.structure.rdb.ColumnDefinition;
 import togos.codeemitter.structure.rdb.ForeignKeyConstraint;
@@ -28,9 +27,10 @@ public class SQLEmitterTest extends TestCase
 		));
 		td.indexes.add(new IndexDefinition("Toad", Arrays.asList("ToadName")));
 		
-		StringWriter sw = new StringWriter();
-		SQLEmitter sqlEmitter = new SQLEmitter(new TextWriter(sw));
+		SQLEmitter sqlEmitter = new SQLEmitter();
 		
+		StringCollector sc = new StringCollector();
+		sqlEmitter.pipe(sc);
 		sqlEmitter.emitTableCreation(td);
 		
 		assertEquals(
@@ -44,7 +44,7 @@ public class SQLEmitterTest extends TestCase
 			"\tINDEX \"Toad\" (\"ToadName\"),\n" +
 			"\tFOREIGN KEY (\"ScoopID\", \"ScoopDate\") REFERENCES \"Scoop\" (\"IDOfScoop\", \"DateOfScoop\")\n" +
 			");\n",
-			sw.toString()
+			sc.toString()
 		);
 	}
 }

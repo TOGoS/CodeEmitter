@@ -1,6 +1,5 @@
 package togos.lang;
 
-import togos.lang.SourceLocation;
 
 public class BaseSourceLocation implements SourceLocation
 {

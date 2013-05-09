@@ -1,8 +1,6 @@
 package togos.codeemitter.sql;
 
-import java.io.IOException;
-import java.io.Writer;
-
+import togos.asyncstream.BaseStreamSource;
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
 import togos.codeemitter.structure.rdb.AutoIncrementExpression;
@@ -13,22 +11,20 @@ import togos.codeemitter.structure.rdb.TableDefinition;
 import togos.lang.CompileError;
 import togos.lang.SourceLocation;
 
-public class SQLEmitter implements ExpressionEmitter<Exception>
+public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEmitter<Exception>
 {
-	TextWriter w;
-	public SQLEmitter( TextWriter w ) {
-		this.w = w;
-	}
-	public SQLEmitter( Writer w ) {
-		this( new TextWriter(w) );
+	TextWriter w = new TextWriter(this.asDestination());
+	
+	protected static String doubleCharEscape( String text, char c ) {
+		return text.replace( ""+c, ""+c+c );
 	}
 	
-	protected String quoteIdentifier( String ident ) {
-		return '"' + ident.replace("\"", "\"\"") + '"';
+	public String quoteIdentifier( String ident ) {
+		return '"' + doubleCharEscape(ident, '"') + '"';
 	}
 	
-	protected String quoteText( String ident ) {
-		return "'" + ident.replace("'", "''") + "'";
+	public String quoteText( String ident ) {
+		return "'" + doubleCharEscape(ident, '\'') + "'";
 	}
 	
 	protected String emitAutoIncrementColumnModifier() {
@@ -48,7 +44,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>
 		}
 	}
 	
-	public void emitIndexDefinition( IndexDefinition id ) throws IOException {
+	public void emitIndexDefinition( IndexDefinition id ) throws Exception {
 		w.write("INDEX ");
 		if( id.name != null ) {
 			w.write(quoteIdentifier(id.name));
@@ -64,7 +60,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>
 		w.write(")");
 	}
 	
-	public void emitForeignKeyConstraint( ForeignKeyConstraint fkc ) throws IOException {
+	public void emitForeignKeyConstraint( ForeignKeyConstraint fkc ) throws Exception {
 		w.write("FOREIGN KEY (");
 		boolean nc = false;
 		for( String cn : fkc.localColumnNames ) {
@@ -84,7 +80,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>
 		w.write(")");
 	}
 	
-	protected void getReadyToEmitAComponent( boolean anyComponentsAlreadyEmitted ) throws IOException {
+	protected void getReadyToEmitAComponent( boolean anyComponentsAlreadyEmitted ) throws Exception {
 		w.endLine(anyComponentsAlreadyEmitted ? "," : "");
 		w.startLine();
 	}

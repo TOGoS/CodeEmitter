@@ -1,6 +1,5 @@
 package togos.lang;
 
-import togos.lang.SourceLocation;
 
 public class CompileError extends ScriptError
 {

@@ -1,6 +1,5 @@
 package togos.codeemitter.php;
 
-import java.io.IOException;
 import java.util.List;
 
 import togos.codeemitter.ExpressionEmitter;
@@ -52,7 +51,7 @@ public class PHPEmitter implements ExpressionEmitter<Exception>
 		}
 	}
 	
-	protected void emitPrimaryConstructor( List<FieldDefinition> fields ) throws IOException {
+	protected void emitPrimaryConstructor( List<FieldDefinition> fields ) throws Exception {
 		w.startLine("public function __construct(");
 		boolean first = true;
 		for( FieldDefinition def : fields ) {
@@ -67,7 +66,7 @@ public class PHPEmitter implements ExpressionEmitter<Exception>
 		w.endIndentedBlock("}");
 	}
 	
-	protected void emitClassBody( ClassDefinition cd ) throws IOException {
+	protected void emitClassBody( ClassDefinition cd ) throws Exception {
 		for( FieldDefinition fd : cd.instanceFields ) {
 			w.writeLine( visibilityModifier(fd.visibility)+" $"+fd.name+";");
 		}
@@ -77,7 +76,7 @@ public class PHPEmitter implements ExpressionEmitter<Exception>
 		}
 	}
 	
-	public void emitClass( ClassDefinition cd ) throws IOException {
+	public void emitClass( ClassDefinition cd ) throws Exception {
 		w.writeLine("class " + phpClassName(cd.name));
 		w.startIndentedBlock("{");
 		w.thatWasASpacerLine();
