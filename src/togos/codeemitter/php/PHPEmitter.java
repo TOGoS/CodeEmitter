@@ -2,6 +2,7 @@ package togos.codeemitter.php;
 
 import java.util.List;
 
+import togos.asyncstream.BaseStreamSource;
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
 import togos.codeemitter.structure.ClassDefinition;
@@ -11,23 +12,20 @@ import togos.codeemitter.structure.MemberVisibility;
 import togos.lang.CompileError;
 import togos.lang.SourceLocation;
 
-public class PHPEmitter implements ExpressionEmitter<Exception>
+public class PHPEmitter extends BaseStreamSource<char[]> implements ExpressionEmitter<Exception>
 {
-	final TextWriter w;
-	public PHPEmitter( TextWriter w ) {
-		this.w = w;
-	}
+	public final TextWriter textWriter = new TextWriter(this.asDestination());
 	
 	@Override
 	public void emitScalarLiteral(Object v, SourceLocation sLoc) throws Exception {
 		if( v == null ) {
-			w.write("null");
+			textWriter.write("null");
 		} else if( v == Boolean.FALSE ) {
-			w.write("false");
+			textWriter.write("false");
 		} else if( v == Boolean.TRUE ) {
-			w.write("true");
+			textWriter.write("true");
 		} else if( v instanceof Number ) {
-			w.write(v.toString());
+			textWriter.write(v.toString());
 		} else {
 			throw new CompileError("Can't encode "+v+" as a scalar literal", sLoc);
 		}
@@ -52,35 +50,40 @@ public class PHPEmitter implements ExpressionEmitter<Exception>
 	}
 	
 	protected void emitPrimaryConstructor( List<FieldDefinition> fields ) throws Exception {
-		w.startLine("public function __construct(");
+		textWriter.startLine("public function __construct(");
 		boolean first = true;
 		for( FieldDefinition def : fields ) {
-			if( !first ) w.write(", ");
-			w.write("$"+def.name);
+			if( !first ) textWriter.write(", ");
+			textWriter.write("$"+def.name);
 			first = false;
 		}
-		w.startIndentedBlock(") {");
+		textWriter.endLine(") {");
+		textWriter.indentMore();
 		for( FieldDefinition def : fields ) {
-			w.writeLine("$this->"+def.name+" = $"+def.name);
+			textWriter.writeLine("$this->"+def.name+" = $"+def.name);
 		}
-		w.endIndentedBlock("}");
+		textWriter.endIndentedBlock("}");
 	}
 	
 	protected void emitClassBody( ClassDefinition cd ) throws Exception {
 		for( FieldDefinition fd : cd.instanceFields ) {
-			w.writeLine( visibilityModifier(fd.visibility)+" $"+fd.name+";");
+			textWriter.writeLine( visibilityModifier(fd.visibility)+" $"+fd.name+";");
 		}
 		if( cd.primaryConstructorInitializedFields.size() > 0 ) {
-			w.giveTheNextLineSomeSpace();
+			textWriter.giveTheNextLineSomeSpace();
 			emitPrimaryConstructor(cd.primaryConstructorInitializedFields);
 		}
 	}
 	
 	public void emitClass( ClassDefinition cd ) throws Exception {
-		w.writeLine("class " + phpClassName(cd.name));
-		w.startIndentedBlock("{");
-		w.thatWasASpacerLine();
+		textWriter.writeLine("class " + phpClassName(cd.name));
+		textWriter.startIndentedBlock("{");
+		textWriter.thatWasASpacerLine();
 		emitClassBody(cd);
-		w.endIndentedBlock("}");
+		textWriter.endIndentedBlock("}");
+	}
+	
+	public void emitOpenTagLine() throws Exception {
+		textWriter.writeLine("<?php");
 	}
 }
