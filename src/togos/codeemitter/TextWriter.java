@@ -56,7 +56,6 @@ public class TextWriter
 	public void writeLine( String text ) throws Exception {
 		writeLine(text, 0);
 	}
-
 	
 	public void startIndentedBlock( String delimiter ) throws Exception {
 		writeLine( delimiter );

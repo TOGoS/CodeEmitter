@@ -1,7 +1,9 @@
 package togos.asyncstream;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.Arrays;
 
 public final class StreamUtil
@@ -24,5 +26,16 @@ public final class StreamUtil
 			d.data( Arrays.copyOf(buffer, i) );
 		}
 		d.end();
+	}
+	
+	public static void pipe( StreamSource<char[]> source, final Writer w, final boolean closeOnEnd ) {
+		source.pipe(new StreamDestination<char[]>() {
+			@Override public void data(char[] value) throws IOException {
+				w.write(value);
+			}
+			@Override public void end() throws Exception {
+				if( closeOnEnd ) w.close();
+			}
+		});
 	}
 }

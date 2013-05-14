@@ -126,7 +126,7 @@ public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEm
 			w.endLine(");");
 		}
 	}
-
+	
 	@Override
 	public void emitScalarLiteral(Object v, SourceLocation sLoc) throws Exception {
 		if( v == null ) {
@@ -142,5 +142,9 @@ public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEm
 		} else {
 			throw new CompileError("Can't encode "+v+" as a scalar literal", sLoc);
 		}
+	}
+
+	public void emitDropTable(String tableName) throws Exception {
+		w.writeLine("DROP TABLE "+quoteIdentifier(tableName)+";");
 	}
 }
