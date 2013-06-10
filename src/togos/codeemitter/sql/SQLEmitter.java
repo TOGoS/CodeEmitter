@@ -13,7 +13,7 @@ import togos.lang.SourceLocation;
 
 public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEmitter<Exception>
 {
-	TextWriter w = new TextWriter(this.asDestination());
+	public final TextWriter w = new TextWriter(this.asDestination());
 	
 	protected static String doubleCharEscape( String text, char c ) {
 		return text.replace( ""+c, ""+c+c );
@@ -146,5 +146,10 @@ public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEm
 
 	public void emitDropTable(String tableName) throws Exception {
 		w.writeLine("DROP TABLE "+quoteIdentifier(tableName)+";");
+	}
+
+	public void emitComment(String string) throws Exception {
+		if( string.isEmpty() ) return;
+		w.writeLine("-- " + string.replace("\n", "\n-- "));
 	}
 }
