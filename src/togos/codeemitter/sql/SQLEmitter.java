@@ -8,6 +8,7 @@ import togos.codeemitter.structure.rdb.ColumnDefinition;
 import togos.codeemitter.structure.rdb.ForeignKeyConstraint;
 import togos.codeemitter.structure.rdb.IndexDefinition;
 import togos.codeemitter.structure.rdb.TableDefinition;
+import togos.lang.BaseSourceLocation;
 import togos.lang.CompileError;
 import togos.lang.SourceLocation;
 
@@ -151,5 +152,37 @@ public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEm
 	public void emitComment(String string) throws Exception {
 		if( string.isEmpty() ) return;
 		w.writeLine("-- " + string.replace("\n", "\n-- "));
+	}
+	
+	boolean first;	
+	public void beginInsertValues(String destTableName, String[] columnNames) throws Exception {
+		w.writeLine("INSERT INTO "+quoteIdentifier(destTableName));
+		
+		w.write("(");
+		boolean frist = true;
+		for( String cn : columnNames ) {
+			if( !frist ) w.write(", ");
+			w.write(quoteIdentifier(cn));
+			frist = false;
+		}
+		w.write(")");
+		first = true;
+	}
+	
+	public void emitInsertValue( Object[] values ) throws Exception {
+		w.writeLine( first ? " VALUES" : "," );
+		w.write("(");
+		boolean frist = true;
+		for( Object v : values ) {
+			if( !frist ) w.write(", ");
+			emitScalarLiteral(v, BaseSourceLocation.NONE);
+			frist = false;
+		}
+		w.write(")");
+		first = false;
+	}
+	
+	public void endInsertValues() throws Exception {
+		w.writeLine(";");
 	}
 }
