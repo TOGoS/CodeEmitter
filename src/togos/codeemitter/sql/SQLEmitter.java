@@ -62,6 +62,11 @@ public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEm
 	}
 	
 	public void emitForeignKeyConstraint( ForeignKeyConstraint fkc ) throws Exception {
+		if( fkc.name != null ) {
+			w.write("CONSTRAINT ");
+			w.write(quoteIdentifier(fkc.name));
+			w.write(" ");
+		}
 		w.write("FOREIGN KEY (");
 		boolean nc = false;
 		for( String cn : fkc.localColumnNames ) {
