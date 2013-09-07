@@ -12,7 +12,7 @@ import togos.lang.BaseSourceLocation;
 import togos.lang.CompileError;
 import togos.lang.SourceLocation;
 
-public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEmitter<Exception>
+public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEmitter<Exception>, SQLQuoter
 {
 	public final TextWriter w = new TextWriter(this.asDestination());
 	
