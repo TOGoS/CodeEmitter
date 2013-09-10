@@ -2,7 +2,6 @@ package togos.codeemitter.php;
 
 import java.util.List;
 
-import togos.asyncstream.BaseCharStreamSource;
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
 import togos.codeemitter.structure.ClassDefinition;
@@ -12,9 +11,13 @@ import togos.codeemitter.structure.MemberVisibility;
 import togos.lang.CompileError;
 import togos.lang.SourceLocation;
 
-public class PHPEmitter extends BaseCharStreamSource implements ExpressionEmitter<Exception>
+public class PHPEmitter implements ExpressionEmitter<Exception>
 {
-	public final TextWriter textWriter = new TextWriter(this.getSourceOutputAsAppendable());
+	public final TextWriter textWriter;
+	
+	public PHPEmitter( Appendable dest ) {
+		textWriter = new TextWriter(dest);
+	}
 	
 	@Override
 	public void emitScalarLiteral(Object v, SourceLocation sLoc) throws Exception {
