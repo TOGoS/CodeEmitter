@@ -1,6 +1,8 @@
 package togos.codeemitter.json;
 
-import togos.asyncstream.StreamDestination;
+import java.io.IOException;
+
+import togos.codeemitter.InvalidEmittanceException;
 import togos.codeemitter.TextWriter;
 
 public class JSONEmitter
@@ -9,7 +11,7 @@ public class JSONEmitter
 	public JSONEmitter( TextWriter tw ) {
 		this.tw = tw;
 	}
-	public JSONEmitter( StreamDestination<char[]> dest ) {
+	public JSONEmitter( Appendable dest ) {
 		this( new TextWriter(dest) );
 	}
 	
@@ -21,10 +23,10 @@ public class JSONEmitter
 	State state = State.NONE;
 	
 	// Call before writing each item in a list or key in a map
-	public void preItem() throws Exception {
+	public void preItem() throws IOException {
 		switch( state ) {
 		case NONE:
-			throw new Exception("Can't open items from 'none' state!  (Must have opened a list or map)");
+			throw new InvalidEmittanceException("Can't open items from 'none' state!  (Must have opened a list or map)");
 		case ITEMS_WRITTEN:
 			tw.write(",");
 			tw.endLine();
@@ -39,16 +41,16 @@ public class JSONEmitter
 		state = State.ITEMS_WRITTEN;
 	};
 	
-	public void open( String delimiter ) throws Exception {
+	public void open( String delimiter ) throws IOException {
 		tw.write(delimiter);
 		state = State.OBJECT_OPENED;
 		++depth;
 	}
 	
-	public void close( String delimiter ) throws Exception {
+	public void close( String delimiter ) throws IOException {
 		switch( state ) {
 		case NONE:
-			throw new Exception("Can't go closing here; nothing opened");
+			throw new InvalidEmittanceException("Can't go closing here; nothing opened");
 		case ITEMS_WRITTEN:
 			tw.endLine();
 			tw.indentLess();
@@ -61,51 +63,51 @@ public class JSONEmitter
 		state = State.ITEMS_WRITTEN;
 	}
 	
-	public void literal(String l) throws Exception {
+	public void literal(String l) throws IOException {
 		tw.write(l);
 	}
 	
-	public void item( Object value ) throws Exception {
+	public void item( Object value ) throws IOException {
 		preItem();
 		value( value );
 	}
 	
-	public void mapsTo() throws Exception {
+	public void mapsTo() throws IOException {
 		tw.write(": ");
 	}
 	
-	public void openMapping( String key ) throws Exception {
+	public void openMapping( String key ) throws IOException {
 		preItem();
 		string( key );
 		mapsTo();
 	}
 	
-	public void mapping( String key, Object value ) throws Exception {
+	public void mapping( String key, Object value ) throws IOException {
 		preItem();
 		string( key );
 		mapsTo();
 		value( value );
 	}
 	
-	public void openList() throws Exception { open("["); }
-	public void closeList() throws Exception { close("]"); }
-	public void openMap() throws Exception { open("{"); }
-	public void closeMap() throws Exception { close("}"); }
+	public void openList() throws IOException { open("["); }
+	public void closeList() throws IOException { close("]"); }
+	public void openMap() throws IOException { open("{"); }
+	public void closeMap() throws IOException { close("}"); }
 	
-	public void string( String s ) throws Exception {
+	public void string( String s ) throws IOException {
 		// TODO: Make better
 		tw.write('"' + s.replace("\\","\\\\").replace("\"", "\\\"") + '"');
 	}
 	
-	public void number( Number n ) throws Exception {
+	public void number( Number n ) throws IOException {
 		literal( n.toString() );
 	}
 	
-	public void bool( boolean b ) throws Exception {
+	public void bool( boolean b ) throws IOException {
 		literal( Boolean.toString(b) );
 	}
 	
-	public void value( Object value ) throws Exception {
+	public void value( Object value ) throws IOException {
 		if( value instanceof String ) {
 			string( (String)value );
 		} else if( value instanceof Number ) {
@@ -113,7 +115,7 @@ public class JSONEmitter
 		} else if( value instanceof Boolean ) {
 			bool( (Boolean)value );
 		} else {
-			throw new Exception("Don't know how to encode scalar "+value.getClass()+" as JSON");
+			throw new InvalidEmittanceException("Don't know how to encode scalar "+value.getClass()+" as JSON");
 		}
 	}
 }

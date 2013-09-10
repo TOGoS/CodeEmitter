@@ -1,6 +1,6 @@
 package togos.codeemitter.sql;
 
-import togos.asyncstream.BaseStreamSource;
+import togos.asyncstream.BaseCharStreamSource;
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
 import togos.codeemitter.structure.rdb.AutoIncrementExpression;
@@ -12,9 +12,9 @@ import togos.lang.BaseSourceLocation;
 import togos.lang.CompileError;
 import togos.lang.SourceLocation;
 
-public class SQLEmitter extends BaseStreamSource<char[]> implements ExpressionEmitter<Exception>, SQLQuoter
+public class SQLEmitter extends BaseCharStreamSource implements ExpressionEmitter<Exception>, SQLQuoter
 {
-	public final TextWriter w = new TextWriter(this.asDestination());
+	public final TextWriter w = new TextWriter(this.getSourceOutputAsAppendable());
 	
 	protected static String doubleCharEscape( String text, char c ) {
 		return text.replace( ""+c, ""+c+c );

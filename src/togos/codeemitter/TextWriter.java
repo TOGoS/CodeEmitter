@@ -1,11 +1,11 @@
 package togos.codeemitter;
 
-import togos.asyncstream.StreamDestination;
+import java.io.IOException;
 
 public class TextWriter
 {
-	final StreamDestination<char[]> dest;
-	public TextWriter( StreamDestination<char[]> dest ) {
+	final Appendable dest;
+	public TextWriter( Appendable dest ) {
 		this.dest = dest;
 	}
 	
@@ -15,11 +15,11 @@ public class TextWriter
 	public int indentLevel = 0;
 	public String indentSequence = "\t";
 	
-	public void write( String text ) throws Exception {
-		dest.data(text.toCharArray());
+	public void write( String text ) throws IOException {
+		dest.append(text);
 	}
 	
-	public void writeIndent() throws Exception {
+	public void writeIndent() throws IOException {
 		for( int i=0; i<indentLevel; ++i ) {
 			write(indentSequence);
 		}
@@ -28,46 +28,46 @@ public class TextWriter
 	public void indentMore() { ++indentLevel; }
 	public void indentLess() { --indentLevel; }
 	
-	public void startLine() throws Exception {
+	public void startLine() throws IOException {
 		writeIndent();
 	}
 	
-	public void startLine(String text) throws Exception {
+	public void startLine(String text) throws IOException {
 		startLine();
 		write(text);
 	}
 	
-	public void endLine() throws Exception {
+	public void endLine() throws IOException {
 		write("\n");
 	}
 	
-	public void endLine(String text) throws Exception {
+	public void endLine(String text) throws IOException {
 		write(text);
 		endLine();
 	}
 	
-	public void writeLine( String text, int flags ) throws Exception {
+	public void writeLine( String text, int flags ) throws IOException {
 		startLine();
 		write(text);
 		endLine();
 		previousLineFlags = flags;
 	}
 	
-	public void writeLine( String text ) throws Exception {
+	public void writeLine( String text ) throws IOException {
 		writeLine(text, 0);
 	}
 	
-	public void startIndentedBlock( String delimiter ) throws Exception {
+	public void startIndentedBlock( String delimiter ) throws IOException {
 		writeLine( delimiter );
 		indentMore();
 	}
 	
-	public void endIndentedBlock( String delimiter ) throws Exception {
+	public void endIndentedBlock( String delimiter ) throws IOException {
 		indentLess();
 		writeLine( delimiter );
 	}
 	
-	public void giveTheNextLineSomeSpace() throws Exception {
+	public void giveTheNextLineSomeSpace() throws IOException {
 		if( (previousLineFlags & SPACER_LINE) == 0 ) {
 			writeLine( "", SPACER_LINE );
 		}
