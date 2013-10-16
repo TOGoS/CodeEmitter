@@ -45,6 +45,8 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		}
 		if( !cd.nullable ) {
 			w.write(" NOT NULL");
+		} else {
+			w.write(" NULL");
 		}
 	}
 	
