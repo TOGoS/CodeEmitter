@@ -35,16 +35,24 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		throw new UnsupportedOperationException();
 	}
 	
+	protected boolean needExplicitNullModifier(ColumnDefinition cd) {
+		// This is here so we can override it for MySQL,
+		// which interprets things in silly ways, sometimes.
+		return false;
+	}
+	
 	public void emitColumnDefinition( ColumnDefinition cd ) throws Exception {
 		w.write(quoteIdentifier(cd.name)+" "+cd.type);
+		if( !cd.nullable ) {
+			w.write(" NOT NULL");
+		} else if( cd.nullable && needExplicitNullModifier(cd) ) {
+			w.write(" NULL");
+		}
 		if( cd.defaultValue == AutoIncrementExpression.INSTANCE ) {
 			emitAutoIncrementColumnModifier();
 		} else if( cd.defaultValue != null ) {
 			w.write(" DEFAULT ");
 			cd.defaultValue.emit(this);
-		}
-		if( !cd.nullable ) {
-			w.write(" NOT NULL");
 		}
 	}
 	
