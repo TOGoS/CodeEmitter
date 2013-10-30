@@ -72,29 +72,38 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		w.write(")");
 	}
 	
-	public void emitForeignKeyConstraint( ForeignKeyConstraint fkc ) throws Exception {
+	public String formatForeignKeyConstraint( ForeignKeyConstraint fkc ) {
+		String line = "";
 		if( fkc.name != null ) {
-			w.write("CONSTRAINT ");
-			w.write(quoteIdentifier(fkc.name));
-			w.write(" ");
+			line += "CONSTRAINT ";
+			line += quoteIdentifier(fkc.name); 
+			line += " ";
 		}
-		w.write("FOREIGN KEY (");
+		line += "FOREIGN KEY (";
 		boolean nc = false;
 		for( String cn : fkc.localColumnNames ) {
-			if( nc ) w.write(", ");
-			w.write( quoteIdentifier(cn) );
+			if( nc ) line += ", ";
+			line += quoteIdentifier(cn);
 			nc = true;
 		}
-		w.write(") REFERENCES ");
-		w.write(quoteIdentifier(fkc.foreignTableName));
-		w.write(" (");
+		line += ")";
+		line += line.length() > 70 ? "\n\t" : " ";
+		line += "REFERENCES ";
+		
+		line += quoteIdentifier(fkc.foreignTableName);
+		line += " (";
 		nc = false;
 		for( String cn : fkc.foreignColumnNames ) {
-			if( nc ) w.write(", ");
-			w.write( quoteIdentifier(cn) );
+			if( nc ) line += ", ";
+			line += quoteIdentifier(cn);
 			nc = true;
 		}
-		w.write(")");
+		line += ")";
+		return line;
+	}
+	
+	public void emitForeignKeyConstraint( ForeignKeyConstraint fkc ) throws Exception {
+		w.write(w.correctIndent(formatForeignKeyConstraint(fkc)));
 	}
 	
 	protected void getReadyToEmitAComponent( boolean anyComponentsAlreadyEmitted ) throws Exception {

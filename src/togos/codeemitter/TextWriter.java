@@ -25,6 +25,13 @@ public class TextWriter
 		}
 	}
 	
+	public String correctIndent( String text ) {
+		String replacement = "\n";
+		for( int i=0; i<indentLevel; ++i ) replacement += indentSequence;
+		
+		return text.replace("\n", replacement);
+	}
+	
 	public void indentMore() { ++indentLevel; }
 	public void indentLess() { --indentLevel; }
 	
