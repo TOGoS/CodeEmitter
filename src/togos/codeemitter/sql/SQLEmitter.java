@@ -1,5 +1,7 @@
 package togos.codeemitter.sql;
 
+import java.io.IOException;
+
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
 import togos.codeemitter.structure.rdb.AutoIncrementExpression;
@@ -56,7 +58,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		}
 	}
 	
-	public void emitIndexDefinition( IndexDefinition id ) throws Exception {
+	public void emitIndexDefinition( IndexDefinition id ) throws IOException {
 		w.write("INDEX ");
 		if( id.name != null ) {
 			w.write(quoteIdentifier(id.name));
@@ -102,11 +104,11 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		return line;
 	}
 	
-	public void emitForeignKeyConstraint( ForeignKeyConstraint fkc ) throws Exception {
+	public void emitForeignKeyConstraint( ForeignKeyConstraint fkc ) throws IOException {
 		w.write(w.correctIndent(formatForeignKeyConstraint(fkc)));
 	}
 	
-	protected void getReadyToEmitAComponent( boolean anyComponentsAlreadyEmitted ) throws Exception {
+	protected void getReadyToEmitAComponent( boolean anyComponentsAlreadyEmitted ) throws IOException {
 		w.endLine(anyComponentsAlreadyEmitted ? "," : "");
 		w.startLine();
 	}
@@ -154,7 +156,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 	}
 	
 	@Override
-	public void emitScalarLiteral(Object v, SourceLocation sLoc) throws Exception {
+	public void emitScalarLiteral(Object v, SourceLocation sLoc) throws CompileError, IOException {
 		if( v == null ) {
 			w.write("NULL");
 		} else if( v == Boolean.FALSE ) {
@@ -174,13 +176,13 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		w.writeLine("DROP TABLE "+quoteIdentifier(tableName)+";");
 	}
 
-	public void emitComment(String string) throws Exception {
+	public void emitComment(String string) throws IOException {
 		if( string.isEmpty() ) return;
 		w.writeLine("-- " + string.replace("\n", "\n-- "));
 	}
 	
 	boolean first;	
-	public void beginInsertValues(String destTableName, String[] columnNames) throws Exception {
+	public void beginInsertValues(String destTableName, String[] columnNames) throws IOException {
 		w.writeLine("INSERT INTO "+quoteIdentifier(destTableName));
 		
 		w.write("(");
@@ -194,7 +196,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		first = true;
 	}
 	
-	public void emitInsertValue( Object[] values ) throws Exception {
+	public void emitInsertValue( Object[] values ) throws CompileError, IOException {
 		w.writeLine( first ? " VALUES" : "," );
 		w.write("(");
 		boolean frist = true;
@@ -207,7 +209,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		first = false;
 	}
 	
-	public void endInsertValues() throws Exception {
+	public void endInsertValues() throws IOException {
 		w.writeLine(";");
 	}
 }
