@@ -2,7 +2,7 @@ package togos.codeemitter.sql.expr;
 
 import togos.codeemitter.sql.QueryQuoter;
 
-class LiteralNumberExpression extends StringBaseQueryExpression
+public class LiteralNumberExpression extends StringBaseQueryExpression
 {
 	Number n;
 	

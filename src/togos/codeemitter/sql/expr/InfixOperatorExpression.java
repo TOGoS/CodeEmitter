@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import togos.codeemitter.sql.QueryQuoter;
 
-class InfixOperatorExpression extends AppendBaseQueryExpression
+public class InfixOperatorExpression extends AppendBaseQueryExpression
 {
 	protected final String op;
 	protected final QueryExpression arg0, arg1;

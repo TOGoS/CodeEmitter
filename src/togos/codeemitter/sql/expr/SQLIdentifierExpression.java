@@ -2,7 +2,7 @@ package togos.codeemitter.sql.expr;
 
 import togos.codeemitter.sql.QueryQuoter;
 
-class SQLIdentifierExpression extends StringBaseQueryExpression
+public class SQLIdentifierExpression extends StringBaseQueryExpression
 {
 	protected final String name;
 	

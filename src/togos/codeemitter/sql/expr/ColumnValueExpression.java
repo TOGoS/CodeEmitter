@@ -2,7 +2,7 @@ package togos.codeemitter.sql.expr;
 
 import togos.codeemitter.sql.QueryQuoter;
 
-class ColumnValueExpression extends StringBaseQueryExpression
+public class ColumnValueExpression extends StringBaseQueryExpression
 {
 	public final QueryExpression table;
 	public final String columnName;
