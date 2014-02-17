@@ -6,6 +6,6 @@ public class FileUtil
 {
 	public static void mkParentDirs( File f ) {
 		File p = f.getParentFile();
-		if( !p.exists() ) p.mkdirs();
+		if( p != null && !p.exists() ) p.mkdirs();
 	}
 }
