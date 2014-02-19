@@ -3,11 +3,13 @@ package togos.codeemitter.structure.rdb;
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.structure.Expression;
 
-public final class AutoIncrementExpression implements Expression
+public final class NextSequenceValueExpression implements Expression
 {
-	public static final AutoIncrementExpression INSTANCE = new AutoIncrementExpression();
+	public final String sequenceName;
 	
-	private AutoIncrementExpression() { }
+	public NextSequenceValueExpression( String sequenceName ) {
+		this.sequenceName = sequenceName;
+	}
 	
 	@Override
 	public <Ex extends Throwable> void emit(ExpressionEmitter<? extends Ex> emitter) {

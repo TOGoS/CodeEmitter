@@ -4,10 +4,11 @@ import java.io.IOException;
 
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
-import togos.codeemitter.structure.rdb.AutoIncrementExpression;
+import togos.codeemitter.structure.rdb.NextAutoIncrementValueExpression;
 import togos.codeemitter.structure.rdb.ColumnDefinition;
 import togos.codeemitter.structure.rdb.ForeignKeyConstraint;
 import togos.codeemitter.structure.rdb.IndexDefinition;
+import togos.codeemitter.structure.rdb.NextSequenceValueExpression;
 import togos.codeemitter.structure.rdb.TableDefinition;
 import togos.lang.BaseSourceLocation;
 import togos.lang.CompileError;
@@ -33,10 +34,6 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		return "'" + doubleCharEscape(ident, '\'') + "'";
 	}
 	
-	protected String emitAutoIncrementColumnModifier() {
-		throw new UnsupportedOperationException();
-	}
-	
 	protected boolean needExplicitNullModifier(ColumnDefinition cd) {
 		// This is here so we can override it for MySQL,
 		// which interprets things in silly ways, sometimes.
@@ -50,8 +47,10 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		} else if( cd.nullable && needExplicitNullModifier(cd) ) {
 			w.write(" NULL");
 		}
-		if( cd.defaultValue == AutoIncrementExpression.INSTANCE ) {
-			emitAutoIncrementColumnModifier();
+		if( cd.defaultValue == NextAutoIncrementValueExpression.INSTANCE ) {
+			w.write( " AUTO_INCREMENT" );
+		} else if( cd.defaultValue instanceof NextSequenceValueExpression ) {
+			w.write( " DEFAULT nextval(" + quoteIdentifier( ((NextSequenceValueExpression)cd.defaultValue).sequenceName ) + ")" );
 		} else if( cd.defaultValue != null ) {
 			w.write(" DEFAULT ");
 			cd.defaultValue.emit(this);
