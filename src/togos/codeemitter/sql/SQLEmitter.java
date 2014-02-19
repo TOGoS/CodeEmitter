@@ -50,7 +50,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		if( cd.defaultValue == NextAutoIncrementValueExpression.INSTANCE ) {
 			w.write( " AUTO_INCREMENT" );
 		} else if( cd.defaultValue instanceof NextSequenceValueExpression ) {
-			w.write( " DEFAULT nextval(" + quoteIdentifier( ((NextSequenceValueExpression)cd.defaultValue).sequenceName ) + ")" );
+			w.write( " DEFAULT nextval(" + quoteText( ((NextSequenceValueExpression)cd.defaultValue).sequenceName ) + ")" );
 		} else if( cd.defaultValue != null ) {
 			w.write(" DEFAULT ");
 			cd.defaultValue.emit(this);
