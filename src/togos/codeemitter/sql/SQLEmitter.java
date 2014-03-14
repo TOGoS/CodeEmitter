@@ -100,6 +100,12 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 			nc = true;
 		}
 		line += ")";
+		if( fkc.onUpdateAction != null ) {
+			line += " ON UPDATE "+fkc.onUpdateAction;
+		}
+		if( fkc.onDeleteAction != null ) {
+			line += " ON DELETE "+fkc.onDeleteAction;
+		}
 		return line;
 	}
 	
