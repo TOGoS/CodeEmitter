@@ -4,10 +4,10 @@ import java.util.List;
 
 public class ForeignKeyConstraint
 {
-	public String name;
-	public List<String> localColumnNames;
-	public String foreignTableName;
-	public List<String> foreignColumnNames;
+	public final String name;
+	public final List<String> localColumnNames;
+	public final String foreignTableName;
+	public final List<String> foreignColumnNames;
 	
 	public ForeignKeyConstraint(
 		String name, List<String> localColumnNames,
