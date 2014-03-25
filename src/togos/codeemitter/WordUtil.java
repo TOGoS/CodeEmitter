@@ -81,7 +81,7 @@ public class WordUtil
 			return phrase.substring(0,phrase.length()-2)+"es";
 		} else if( phrase.endsWith("y") ) {
 			return phrase.substring(0,phrase.length()-1)+"ies";
-		} else if( phrase.endsWith("s") ) {
+		} else if( phrase.endsWith("s") || phrase.endsWith("tch") ) {
 			return phrase + "es";
 		} else {
 			return phrase + "s";
