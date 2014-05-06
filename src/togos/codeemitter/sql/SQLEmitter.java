@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
-import togos.codeemitter.structure.rdb.NextAutoIncrementValueExpression;
 import togos.codeemitter.structure.rdb.ColumnDefinition;
 import togos.codeemitter.structure.rdb.ForeignKeyConstraint;
 import togos.codeemitter.structure.rdb.IndexDefinition;
+import togos.codeemitter.structure.rdb.NextAutoIncrementValueExpression;
 import togos.codeemitter.structure.rdb.NextSequenceValueExpression;
 import togos.codeemitter.structure.rdb.TableDefinition;
 import togos.lang.BaseSourceLocation;
