@@ -37,10 +37,10 @@ public class SQLEmitterTest extends TestCase
 			"\t\"ScoopID\" INTEGER,\n" +
 			"\t\"ScoopDate\" DATE,\n" +
 			"\t\"ToadName\" VARCHAR(50) NOT NULL,\n" +
-			"\t\"MuleName\" VARCHAR(10) DEFAULT 'John Cusack' NOT NULL,\n" +
+			"\t\"MuleName\" VARCHAR(10) NOT NULL DEFAULT 'John Cusack',\n" +
 			"\tPRIMARY KEY (\"FrogID\"),\n" +
 			"\tINDEX \"Toad\" (\"ToadName\"),\n" +
-			"\tFOREIGN KEY (\"ScoopID\", \"ScoopDate\") REFERENCES \"Scoop\" (\"IDOfScoop\", \"DateOfScoop\")\n" +
+			"\tCONSTRAINT \"FrogScoop\" FOREIGN KEY (\"ScoopID\", \"ScoopDate\") REFERENCES \"Scoop\" (\"IDOfScoop\", \"DateOfScoop\")\n" +
 			");\n",
 			sc.toString()
 		);
