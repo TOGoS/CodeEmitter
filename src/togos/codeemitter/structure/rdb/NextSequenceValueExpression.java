@@ -5,10 +5,10 @@ import togos.codeemitter.structure.Expression;
 
 public final class NextSequenceValueExpression implements Expression
 {
-	public final String sequenceName;
+	public final String[] sequencePath;
 	
-	public NextSequenceValueExpression( String sequenceName ) {
-		this.sequenceName = sequenceName;
+	public NextSequenceValueExpression( String[] sequencePath ) {
+		this.sequencePath = sequencePath;
 	}
 	
 	@Override

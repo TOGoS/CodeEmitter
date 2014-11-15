@@ -1,6 +1,7 @@
 package togos.codeemitter.sql;
 
 import java.io.IOException;
+import java.lang.StringBuilder;
 
 import togos.codeemitter.ExpressionEmitter;
 import togos.codeemitter.TextWriter;
@@ -24,6 +25,24 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 	
 	protected static String doubleCharEscape( String text, char c ) {
 		return text.replace( ""+c, ""+c+c );
+	}
+	
+	public String quoteIdentifier( String[] path ) {
+		StringBuilder sb = new StringBuilder();
+		for( int i=0; i<path.length; ++i ) {
+			if( i != 0 ) sb.append(".");
+			sb.append(quoteIdentifier(path[i]));
+		}
+		return sb.toString();
+	}
+	
+	protected static String implode( String joiner, String[] things ) {
+		StringBuilder sb = new StringBuilder();
+		for( int i=0; i<things.length; ++i ) {
+			if( i != 0 ) sb.append(joiner);
+			sb.append(things[i]);
+		}
+		return sb.toString();
 	}
 	
 	public String quoteIdentifier( String ident ) {
@@ -50,7 +69,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		if( cd.defaultValue == NextAutoIncrementValueExpression.INSTANCE ) {
 			w.write( " AUTO_INCREMENT" );
 		} else if( cd.defaultValue instanceof NextSequenceValueExpression ) {
-			w.write( " DEFAULT nextval(" + quoteText( ((NextSequenceValueExpression)cd.defaultValue).sequenceName ) + ")" );
+			w.write( " DEFAULT nextval(" + quoteText( implode(".", ((NextSequenceValueExpression)cd.defaultValue).sequencePath )) + ")" );
 		} else if( cd.defaultValue != null ) {
 			w.write(" DEFAULT ");
 			cd.defaultValue.emit(this);
@@ -91,7 +110,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		line += line.length() > 70 ? "\n\t" : " ";
 		line += "REFERENCES ";
 		
-		line += quoteIdentifier(fkc.foreignTableName);
+		line += quoteIdentifier(fkc.foreignTablePath);
 		line += " (";
 		nc = false;
 		for( String cn : fkc.foreignColumnNames ) {
@@ -119,7 +138,7 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 	}
 	
 	public void emitTableCreation( TableDefinition td ) throws Exception {
-		w.write("CREATE TABLE "+quoteIdentifier(td.name) + " (");
+		w.write("CREATE TABLE "+quoteIdentifier(td.path) + " (");
 		w.indentMore();
 		boolean anyComponentsEmitted = false;
 		for( ColumnDefinition cd : td.columns ) {
@@ -177,8 +196,8 @@ public class SQLEmitter implements ExpressionEmitter<Exception>, SQLQuoter
 		}
 	}
 
-	public void emitDropTable(String tableName) throws Exception {
-		w.writeLine("DROP TABLE "+quoteIdentifier(tableName)+";");
+	public void emitDropTable(String[] tablePath) throws Exception {
+		w.writeLine("DROP TABLE "+quoteIdentifier(tablePath)+";");
 	}
 
 	public void emitComment(String string) throws IOException {
