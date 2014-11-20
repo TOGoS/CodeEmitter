@@ -14,7 +14,7 @@ import togos.lang.BaseSourceLocation;
 public class SQLEmitterTest extends TestCase
 {
 	public void testTableEmission() throws Exception {
-		TableDefinition td = new TableDefinition("Frog");
+		TableDefinition td = new TableDefinition(new String[]{"Frog"});
 		td.columns.add(new ColumnDefinition("FrogID", "INTEGER", true, null));
 		td.columns.add(new ColumnDefinition("ScoopID", "INTEGER", true, null));
 		td.columns.add(new ColumnDefinition("ScoopDate", "DATE", true, null));
@@ -23,7 +23,7 @@ public class SQLEmitterTest extends TestCase
 		td.primaryKeyColumnNames = Arrays.asList("FrogID");
 		td.foreignKeyConstraints.add(new ForeignKeyConstraint(
 			"FrogScoop", Arrays.asList("ScoopID","ScoopDate"),
-			"Scoop", Arrays.asList("IDOfScoop","DateOfScoop")
+			new String[]{"Scoop"}, Arrays.asList("IDOfScoop","DateOfScoop")
 		));
 		td.indexes.add(new IndexDefinition("Toad", Arrays.asList("ToadName")));
 		
